@@ -32,10 +32,8 @@ function UsersPermissionsContent() {
   const [notification, setNotification] = useState({ show: false, message: "" });
 
   useEffect(() => {
-    if (router.isReady && (!ci || !aid)) {
-      router.replace("/auth/login");
-    }
-  }, [router.isReady, ci, aid]);
+    // Removed login redirect for missing ci/aid
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -83,50 +81,75 @@ function UsersPermissionsContent() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Placeholder summary data
-  const summary = [
+  // User statistics data matching the image
+  const userStats = [
     {
-      label: "Total Users",
+      title: "Total Users",
       value: "12,847",
       change: "+12% vs last month",
-      iconBg: "bg-blue-500",
       icon: (
-        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" fill="currentColor"/></svg>
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="#3b82f6" strokeWidth="2"/>
+          <circle cx="9" cy="7" r="4" stroke="#3b82f6" strokeWidth="2"/>
+          <path d="M23 20v-2a4 4 0 0 0-3-3.87" stroke="#3b82f6" strokeWidth="2"/>
+          <circle cx="17" cy="7" r="4" stroke="#3b82f6" strokeWidth="2"/>
+        </svg>
       ),
-      color: "text-blue-500"
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
+      changeColor: "text-green-600"
     },
     {
-      label: "Active Users",
+      title: "Active Users",
       value: "11,203",
       change: "+8% vs last month",
-      iconBg: "bg-green-500",
       icon: (
-        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" fill="currentColor"/></svg>
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="#10b981" strokeWidth="2"/>
+          <circle cx="9" cy="7" r="4" stroke="#10b981" strokeWidth="2"/>
+          <path d="M23 20v-2a4 4 0 0 0-3-3.87" stroke="#10b981" strokeWidth="2"/>
+          <circle cx="17" cy="7" r="4" stroke="#10b981" strokeWidth="2"/>
+        </svg>
       ),
-      color: "text-green-500"
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
+      changeColor: "text-green-600"
     },
     {
-      label: "VIP Customers",
+      title: "VIP Customers",
       value: "1,247",
       change: "+15% vs last month",
-      iconBg: "bg-purple-500",
       icon: (
-        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" fill="currentColor"/></svg>
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="#8b5cf6" strokeWidth="2"/>
+          <circle cx="9" cy="7" r="4" stroke="#8b5cf6" strokeWidth="2"/>
+          <path d="M23 20v-2a4 4 0 0 0-3-3.87" stroke="#8b5cf6" strokeWidth="2"/>
+          <circle cx="17" cy="7" r="4" stroke="#8b5cf6" strokeWidth="2"/>
+        </svg>
       ),
-      color: "text-purple-500"
+      bgColor: "bg-purple-100",
+      textColor: "text-purple-600",
+      changeColor: "text-green-600"
     },
     {
-      label: "Suspended",
+      title: "Suspended",
       value: "397",
       change: "-5% vs last month",
-      iconBg: "bg-red-500",
       icon: (
-        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" fill="currentColor"/></svg>
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="#ef4444" strokeWidth="2"/>
+          <circle cx="9" cy="7" r="4" stroke="#ef4444" strokeWidth="2"/>
+          <path d="M23 20v-2a4 4 0 0 0-3-3.87" stroke="#ef4444" strokeWidth="2"/>
+          <circle cx="17" cy="7" r="4" stroke="#ef4444" strokeWidth="2"/>
+        </svg>
       ),
-      color: "text-red-500"
+      bgColor: "bg-red-100",
+      textColor: "text-red-600",
+      changeColor: "text-red-600"
     }
   ];
-  // Placeholder user data
+
+  // User data matching the image
   const users = [
     {
       initials: "JD",
@@ -149,6 +172,28 @@ function UsersPermissionsContent() {
       spent: "$895.5",
       status: "Active",
       lastLogin: "2024-01-14"
+    },
+    {
+      initials: "MJ",
+      name: "Mike Johnson",
+      email: "mike@example.com",
+      role: "VIP Customer",
+      joinDate: "2023-10-05",
+      orders: 25,
+      spent: "$2849.99",
+      status: "Active",
+      lastLogin: "2024-01-13"
+    },
+    {
+      initials: "SW",
+      name: "Sarah Wilson",
+      email: "sarah@example.com",
+      role: "Customer",
+      joinDate: "2023-09-12",
+      orders: 3,
+      spent: "$189.97",
+      status: "Suspended",
+      lastLogin: "2023-12-20"
     }
   ];
 
@@ -186,68 +231,123 @@ function UsersPermissionsContent() {
           <Header ref={headerRef} onMobileSidebarToggle={handleMobileSidebarToggle} mobileSidebarOpen={mobileSidebarOpen} username={user?.name || "admin"} companyName={user?.company || "company name"} />
           <main className="transition-all duration-300 px-2 sm:px-8 py-12 md:py-6" style={{ marginLeft: 0, paddingTop: headerHeight + 16 }}>
             <div className="max-w-6xl mx-auto">
-              <h1 className="text-3xl font-extrabold text-[#7c3aed] mb-1">User Management</h1>
-              <p className="text-gray-500 text-lg mb-6">Manage customer accounts and user permissions</p>
-              {/* Summary cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                {summary.map((item, idx) => (
-                  <div key={item.label} className="bg-white rounded-xl shadow border border-gray-100 p-4 flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${item.iconBg}`}>{React.cloneElement(item.icon, { className: 'w-5 h-5 text-white' })}</div>
-                    <div>
-                      <div className="text-lg font-bold text-gray-900">{item.value}</div>
-                      <div className="text-gray-500 text-sm font-semibold">{item.label}</div>
-                      <div className="text-green-600 text-xs font-semibold">{item.change}</div>
+              {/* Header Section */}
+              <div className="mb-8">
+                <h1 className="text-4xl font-extrabold text-gray-900 mb-2">User Management</h1>
+                <p className="text-gray-500 text-lg">Manage customer accounts and user permissions</p>
+              </div>
+
+              {/* Statistics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                {userStats.map((stat, index) => (
+                  <div key={index} className="flex flex-col items-center bg-white rounded-2xl shadow-lg p-6">
+                    <div className={`${stat.bgColor} rounded-full p-3 mb-3`}>
+                      {stat.icon}
                     </div>
+                    <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                    <div className="text-gray-500 text-sm mt-1">{stat.title}</div>
+                    <div className={`text-xs font-semibold mt-1 ${stat.changeColor}`}>{stat.change}</div>
                   </div>
                 ))}
               </div>
-              {/* Search and filter bar */}
-              <div className="flex flex-col md:flex-row gap-3 mb-4 items-center bg-white p-3 rounded-xl shadow border border-gray-100">
-                <input type="text" placeholder="Search users by name, email, or ID..." className="flex-1 px-3 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#a259f7] text-base" />
-                <select className="px-3 py-2 text-gray-500 rounded-lg border border-gray-200 text-base"><option>All Roles</option></select>
-                <select className="px-3 py-2 text-gray-500 rounded-lg border border-gray-200 text-base"><option>All Status</option></select>
-                <button className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-base text-gray-700 hover:bg-gray-50"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="#a259f7" strokeWidth="2" strokeLinecap="round"/></svg>Filter</button>
+
+              {/* Search and Filter Bar */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8 items-center bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+                <div className="flex-1 relative">
+                  <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search users by name, email, or ID..."
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#a259f7] text-base"
+                  />
+                </div>
+                <select className="px-4 py-3 text-gray-700 rounded-lg border border-gray-200 text-base bg-white">
+                  <option>All Roles</option>
+                </select>
+                <select className="px-4 py-3 text-gray-700 rounded-lg border border-gray-200 text-base bg-white">
+                  <option>All Status</option>
+                </select>
+                <button className="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-200 text-base text-gray-700 hover:bg-gray-50 transition-colors">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                    <path d="M3 6h18M3 12h18M3 18h18" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Filter
+                </button>
               </div>
-              {/* User table */}
-              <div className="bg-white rounded-xl shadow border border-gray-100 overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
+
+              {/* User Table */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <table className="min-w-full">
                   <thead>
-                    <tr className="text-gray-500 font-semibold border-b text-xs">
-                      <th className="py-3 px-4">USER</th>
-                      <th className="py-3 px-4">ROLE</th>
-                      <th className="py-3 px-4">JOIN DATE</th>
-                      <th className="py-3 px-4">ORDERS</th>
-                      <th className="py-3 px-4">TOTAL SPENT</th>
-                      <th className="py-3 px-4">STATUS</th>
-                      <th className="py-3 px-4">LAST LOGIN</th>
-                      <th className="py-3 px-4">ACTIONS</th>
+                    <tr className="border-b border-gray-200">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">USER</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ROLE</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">JOIN DATE</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ORDERS</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">TOTAL SPENT</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">LAST LOGIN</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ACTIONS</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {users.map((user, idx) => (
-                      <tr key={user.email} className="border-b hover:bg-gray-50 transition">
-                        <td className="py-3 px-4 flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-base">{user.initials}</div>
-                          <div>
-                            <div className="font-bold text-base text-gray-900">{user.name}</div>
-                            <div className="text-gray-400 text-xs">{user.email}</div>
+                  <tbody className="divide-y divide-gray-100">
+                    {users.map((user) => (
+                      <tr key={user.email} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                              {user.initials}
+                            </div>
+                            <div>
+                              <div className="font-bold text-gray-900">{user.name}</div>
+                              <div className="text-gray-500 text-sm">{user.email}</div>
+                            </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4">
-                          <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">{user.role}</span>
+                        <td className="px-6 py-4">
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                            user.role === "VIP Customer" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"
+                          }`}>
+                            {user.role}
+                          </span>
                         </td>
-                        <td className="py-3 px-4 text-gray-700">{user.joinDate}</td>
-                        <td className="py-3 px-4 text-gray-700">{user.orders}</td>
-                        <td className="py-3 px-4 font-bold text-gray-900">{user.spent}</td>
-                        <td className="py-3 px-4">
-                          <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">{user.status}</span>
+                        <td className="px-6 py-4 text-gray-700">{user.joinDate}</td>
+                        <td className="px-6 py-4 text-gray-700">{user.orders}</td>
+                        <td className="px-6 py-4 font-bold text-gray-900">{user.spent}</td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                            user.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                          }`}>
+                            {user.status}
+                          </span>
                         </td>
-                        <td className="py-3 px-4 text-gray-700">{user.lastLogin}</td>
-                        <td className="py-3 px-4 flex gap-2 items-center">
-                          <button className="text-purple-500 hover:text-purple-700" title="View"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 10a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2"/></svg></button>
-                          <button className="text-green-500 hover:text-green-700" title="Message"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="2"/></svg></button>
-                          <button className="text-blue-500 hover:text-blue-700" title="Edit"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-4.243 1.414 1.414-4.243a4 4 0 01.828-1.414z" stroke="currentColor" strokeWidth="2"/></svg></button>
-                          <button className="text-red-500 hover:text-red-700" title="Suspend"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M6 7h12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m2 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z" stroke="currentColor" strokeWidth="2"/></svg></button>
+                        <td className="px-6 py-4 text-gray-700">{user.lastLogin}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-3 items-center">
+                            <button className="text-[#a259f7] hover:text-[#7c3aed] transition-colors" title="View">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 10a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                            <button className="text-[#a259f7] hover:text-[#7c3aed] transition-colors" title="Edit">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-4.243 1.414 1.414-4.243a4 4 0 01.828-1.414z" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                            <button className="text-[#a259f7] hover:text-[#7c3aed] transition-colors" title="Email">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/>
+                                <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                            <button className="text-red-500 hover:text-red-700 transition-colors" title="Suspend">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

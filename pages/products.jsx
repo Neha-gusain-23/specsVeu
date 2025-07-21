@@ -43,7 +43,7 @@ function ProductsContent() {
   const [showAutoPopup, setShowAutoPopup] = useState(false);
   const [showManualPopup, setShowManualPopup] = useState(false);
 
-  // Placeholder product data
+  // Product data matching the image
   const products = [
     {
       id: 1,
@@ -63,6 +63,26 @@ function ProductsContent() {
       stock: 12,
       category: "Sunglasses",
       status: "Active",
+      image: "",
+    },
+    {
+      id: 3,
+      name: "Tom Ford TF5401",
+      brand: "Tom Ford",
+      price: 299.99,
+      stock: 8,
+      category: "Eyeglasses",
+      status: "Low Stock",
+      image: "",
+    },
+    {
+      id: 4,
+      name: "Persol 649 Original",
+      brand: "Persol",
+      price: 199.99,
+      stock: 0,
+      category: "Sunglasses",
+      status: "Out of Stock",
       image: "",
     },
   ];
@@ -265,174 +285,118 @@ function ProductsContent() {
             companyName={user?.company || "company name"}
           />
           <main
-            className="transition-all duration-300 px-2 mt-6 sm:px-8 py-12 md:py-6"
+            className="transition-all duration-300 px-2 sm:px-8 py-12 md:py-6"
             style={{ marginLeft: 0, paddingTop: headerHeight + 16 }}
           >
             <div className="max-w-6xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
+              {/* Header Section */}
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h1 className="text-3xl font-extrabold text-[#7c3aed]  mb-1">Product Management</h1>
+                  <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Product Management</h1>
                   <p className="text-gray-500 text-lg">Manage your eyewear inventory and product catalog</p>
                 </div>
                 <button
-                  className="bg-[#a259f7] hover:bg-[#7c3aed] text-white font-semibold py-2 px-4 rounded-lg shadow text-base flex items-center gap-2"
-                  onClick={() =>
-                    router.push({
-                      pathname: "/product-dashboard",
-                      query: { token },
-                    })
-                  }
+                  className="bg-[#a259f7] hover:bg-[#7c3aed] text-white font-semibold py-3 px-6 rounded-lg shadow-lg text-base flex items-center gap-2 transition-colors"
+                  onClick={() => setShowAddModal(true)}
                 >
                   <span className="text-xl font-bold">+</span> Add Product
                 </button>
               </div>
-              {/* Search and Filters */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-4 items-center bg-white p-3 rounded-xl shadow border border-gray-100">
-                <input
-                  type="text"
-                  placeholder="Search products, brands, categories..."
-                  className="flex-1 px-3 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#a259f7] text-base"
-                />
-                <select className="px-3 py-2 text-gray-500 rounded-lg border border-gray-200 text-base">
+
+              {/* Search and Filter Bar */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8 items-center bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+                <div className="flex-1 relative">
+                  <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search products, brands, categories..."
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#a259f7] text-base"
+                  />
+                </div>
+                <select className="px-4 py-3 text-gray-700 rounded-lg border border-gray-200 text-base bg-white">
                   <option>All Categories</option>
                 </select>
-                <select className="px-3 py-2 text-gray-500 rounded-lg border border-gray-200 text-base">
+                <select className="px-4 py-3 text-gray-700 rounded-lg border border-gray-200 text-base bg-white">
                   <option>All Status</option>
                 </select>
-                <button className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-base text-gray-700 hover:bg-gray-50">
+                <button className="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-200 text-base text-gray-700 hover:bg-gray-50 transition-colors">
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                    <path
-                      d="M3 6h18M3 12h18M3 18h18"
-                      stroke="#a259f7"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
+                    <path d="M3 6h18M3 12h18M3 18h18" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                   Filter
                 </button>
               </div>
+
               {/* Product Table */}
-              <div className="bg-white rounded-xl shadow border border-gray-100 overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <table className="min-w-full">
                   <thead>
-                    <tr className="text-gray-500 font-semibold border-b text-xs">
-                      <th className="py-3 px-4">PRODUCT</th>
-                      <th className="py-3 px-4">BRAND</th>
-                      <th className="py-3 px-4">PRICE</th>
-                      <th className="py-3 px-4">STOCK</th>
-                      <th className="py-3 px-4">CATEGORY</th>
-                      <th className="py-3 px-4">STATUS</th>
-                      <th className="py-3 px-4">ACTIONS</th>
+                    <tr className="border-b border-gray-200">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">PRODUCT</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">BRAND</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">PRICE</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">STOCK</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">CATEGORY</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ACTIONS</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {products.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="border-b hover:bg-gray-50 transition"
-                      >
-                        <td className="py-3 px-4 flex items-center gap-3">
-                          <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
-                            {/* Placeholder for image */}
-                            <svg
-                              width="18"
-                              height="18"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="#e5e7eb"
-                                strokeWidth="2"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="font-bold text-base text-gray-900">
-                              {product.name}
+                      <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="#e5e7eb" strokeWidth="2"/>
+                              </svg>
                             </div>
-                            <div className="text-gray-400 text-xs">
-                              ID: #{product.id}
+                            <div>
+                              <div className="font-bold text-gray-900">{product.name}</div>
+                              <div className="text-gray-400 text-sm">ID: #{product.id}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-gray-700 font-medium">
-                          {product.brand}
+                        <td className="px-6 py-4 text-gray-700 font-medium">{product.brand}</td>
+                        <td className="px-6 py-4 font-bold text-gray-900">${product.price.toFixed(2)}</td>
+                        <td className="px-6 py-4">
+                          <span className={`font-semibold ${
+                            product.stock > 20 ? "text-green-600" : 
+                            product.stock > 0 ? "text-orange-500" : "text-red-500"
+                          }`}>
+                            {product.stock} units
+                          </span>
                         </td>
-                        <td className="py-3 px-4 font-bold text-gray-900">
-                          ${product.price.toFixed(2)}
-                        </td>
-                        <td
-                          className={`py-3 px-4 font-semibold ${
-                            product.stock > 20
-                              ? "text-green-600"
-                              : "text-orange-500"
-                          }`}
-                        >
-                          {product.stock} units
-                        </td>
-                        <td className="py-3 px-4 text-gray-700">
-                          {product.category}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                        <td className="px-6 py-4 text-gray-700">{product.category}</td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                            product.status === "Active" ? "bg-green-100 text-green-700" :
+                            product.status === "Low Stock" ? "bg-orange-100 text-orange-700" :
+                            "bg-red-100 text-red-700"
+                          }`}>
                             {product.status}
                           </span>
                         </td>
-                        <td className="py-3 px-4 flex gap-2 items-center">
-                          <button
-                            className="text-[#a259f7] hover:text-[#7c3aed]"
-                            title="View"
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 10a3 3 0 100-6 3 3 0 000 6z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            className="text-[#a259f7] hover:text-[#7c3aed]"
-                            title="Edit"
-                          >
-                            <svg
-                              width="20"
-                              height="20"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-4.243 1.414 1.414-4.243a4 4 0 01.828-1.414z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            className="text-red-500 hover:text-red-700"
-                            title="Delete"
-                          >
-                            <svg
-                              width="20"
-                              height="20"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M6 7h12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m2 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              />
-                            </svg>
-                          </button>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-3 items-center">
+                            <button className="text-[#a259f7] hover:text-[#7c3aed] transition-colors" title="View">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 10a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                            <button className="text-[#a259f7] hover:text-[#7c3aed] transition-colors" title="Edit">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-4.243 1.414 1.414-4.243a4 4 0 01.828-1.414z" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                            <button className="text-red-500 hover:text-red-700 transition-colors" title="Delete">
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M6 7h12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m2 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

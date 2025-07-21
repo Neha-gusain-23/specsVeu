@@ -13,6 +13,7 @@ import useStorePassword from "../hooks/useStorePassword";
 import useNotesTasks from "../hooks/useNotesTasks";
 import useAnnouncements from "../hooks/useAnnouncements";
 import { totalMedia } from "./data";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const ENCRYPTION_KEY = "cyberclipperSecretKey123!";
 function decryptToken(token) {
@@ -36,6 +37,8 @@ function DashboardContent() {
   const router = useRouter();
   const { token } = router.query;
   const { ci, aid } = decryptToken(token);
+  console.log("Token:", token); // DEBUG
+  console.log("Decrypted:", ci, aid); // DEBUG
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(72);
   const { user, loading, error } = useUserInfo();
@@ -70,10 +73,8 @@ function DashboardContent() {
   const recentAnnouncements = (announcementsHook.announcements || []).slice(0, 3);
 
   useEffect(() => {
-    if (router.isReady && (!ci || !aid)) {
-      router.replace("/auth/login");
-    }
-  }, [router.isReady, ci, aid]);
+    // Removed login redirect for missing ci/aid
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -122,8 +123,7 @@ function DashboardContent() {
   }, []);
 
   // Only return after all hooks
-  if (!ci || !aid) return null;
-  if (isAnyLoading) {
+  if (loading) {
     return <div className="flex items-center justify-center min-h-screen w-full"><Loader /></div>;
   }
   if (anyError) {
@@ -187,415 +187,132 @@ function DashboardContent() {
             style={{ marginLeft: 0, paddingTop: headerHeight + 16 }}
           >
             <div className="max-w-6xl mx-auto">
-              <h1 className="text-4xl font-extrabold text-[#7c3aed] mt-8">Dashboard</h1>
-              <p className="mt-2 text-gray-500 text-lg">Welcome back! Here's what's happening with your company today.</p>
-              {/* Stat Cards Section */}
-              <div
-                className="w-full"
-                style={{
-                  overflowX: "auto",
-                  paddingBottom: "1rem",
-                }}
-              >
-                <div
-                  className="grid gap-6 mt-8"
-                  style={{
-                    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                    minWidth: 0,
-                  }}
-                >
-                  {/* Total Employees */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/employees?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Employees</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalEmployees}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-blue-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
+              <h1 className="text-4xl font-extrabold text-gray-900 mt-8">Welcome back! Here's what's happening...</h1>
+              {/* Remove the dashboard search bar here */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8 mb-8">
+                {/* Total Orders */}
+                <div className="flex flex-col items-center bg-white rounded-2xl shadow p-6">
+                  <div className="bg-blue-100 rounded-full p-3 mb-2">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M3 6l1.5 14h15L21 6M16 10a4 4 0 11-8 0" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>
-                  {/* Total Passwords */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/security?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Passwords</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalPasswords}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-pink-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns='http://www.w3.org/2000/svg' className='h-7 w-7 text-white' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 11c0-1.104.896-2 2-2s2 .896 2 2v1h-4v-1zm6 1v-1a6 6 0 10-12 0v1a2 2 0 00-2 2v5a2 2 0 002 2h12a2 2 0 002-2v-5a2 2 0 00-2-2z' /></svg>
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-2xl font-bold text-gray-900">2,847</div>
+                  <div className="text-gray-500 text-sm mt-1">Total Orders</div>
+                </div>
+                {/* Revenue */}
+                <div className="flex flex-col items-center bg-white rounded-2xl shadow p-6">
+                  <div className="bg-green-100 rounded-full p-3 mb-2">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M12 8v8m0 0c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 2v2m0 16v2" stroke="#22c55e" strokeWidth="2" strokeLinecap="round"/></svg>
                   </div>
-                  {/* Total Products */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/products?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Products</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalProducts}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-yellow-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns='http://www.w3.org/2000/svg' className='h-7 w-7 text-white' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 7h18M3 12h18M3 17h18' /></svg>
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-2xl font-bold text-gray-900">$48,392</div>
+                  <div className="text-gray-500 text-sm mt-1">Revenue</div>
+                </div>
+                {/* Active Users */}
+                <div className="flex flex-col items-center bg-white rounded-2xl shadow p-6">
+                  <div className="bg-purple-100 rounded-full p-3 mb-2">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="#a259f7" strokeWidth="2"/><circle cx="9" cy="7" r="4" stroke="#a259f7" strokeWidth="2"/><path d="M23 20v-2a4 4 0 0 0-3-3.87" stroke="#a259f7" strokeWidth="2"/><circle cx="17" cy="7" r="4" stroke="#a259f7" strokeWidth="2"/></svg>
                   </div>
-                  {/* Total Users */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/users-permissions?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Users</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalUsers}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-purple-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-2xl font-bold text-gray-900">12,847</div>
+                  <div className="text-gray-500 text-sm mt-1">Active Users</div>
+                </div>
+                {/* Low Stock Alerts */}
+                <div className="flex flex-col items-center bg-white rounded-2xl shadow p-6">
+                  <div className="bg-orange-100 rounded-full p-3 mb-2">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M21 19H3a2 2 0 01-2-2V7a2 2 0 012-2h18a2 2 0 012 2v10a2 2 0 01-2 2z" stroke="#f59e42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>
-                  {/* Total Tasks */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/notes-tasks?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Tasks</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalTasks}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-green-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Total Announcements */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/announcements?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Announcements</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalAnnouncements}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-red-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns='http://www.w3.org/2000/svg' className='h-7 w-7 text-white' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 13V7a2 2 0 00-2-2H7a2 2 0 00-2 2v6m14 0a2 2 0 01-2 2H7a2 2 0 01-2-2m14 0v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6' /></svg>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Total Media */}
-                  <div 
-                    className="bg-white rounded-2xl shadow p-6 flex flex-col justify-between min-w-[220px] border border-gray-200 transition-transform duration-200 hover:shadow-lg hover:scale-105 cursor-pointer group"
-                    onClick={() => {
-                      if (ci && aid) {
-                        const newToken = encryptToken(ci, aid);
-                        router.push(`/data?token=${encodeURIComponent(newToken)}`);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <span className="text-gray-900 font-semibold text-xl block">Total Media</span>
-                        <div className="text-3xl font-extrabold mt-2 text-purple-600">{totalMedia}</div>
-                        <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          <span>Click to view</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <span className="flex items-center justify-center w-14 h-14 rounded-lg bg-indigo-500 transition-transform duration-200 group-hover:scale-110 hover:scale-110">
-                          <svg xmlns='http://www.w3.org/2000/svg' className='h-7 w-7 text-white' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 10l4.553-2.276A2 2 0 0021 6.382V17.618a2 2 0 01-1.447 1.894L15 17.618M9 10l-4.553-2.276A2 2 0 003 6.382V17.618a2 2 0 001.447 1.894L9 17.618' /></svg>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="text-2xl font-bold text-gray-900">23</div>
+                  <div className="text-gray-500 text-sm mt-1">Low Stock Alerts</div>
                 </div>
               </div>
-              <h1 className="text-3xl md:text-4xl  font-extrabold text-[#7c3aed] mt-5 mb-2">Recent Activity</h1>
-              <p className="text-gray-500 text-xl">A quick overview of your most recent actions</p>
-                       
-              {/* Recent Activity Section */}
-              <div className="w-full flex flex-col gap-8 mt-5">
-                  
-                {/* Recent Employees Table */}
-                <div className="rounded-xl bg-white border border-gray-100 shadow-md p-4 sm:p-8">
-                  <h3 className="text-xl sm:text-2xl font-bold text-blue-600 mb-3 sm:mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    New Employees
-                  </h3>
-                  {/* Table for lg+ */}
-                  <div className="hidden lg:block overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
-                      <thead>
-                        <tr className="bg-blue-50">
-                          <th className="px-4 py-2 text-left font-semibold text-blue-700 whitespace-nowrap">Name</th>
-                          <th className="px-4 py-2 text-left font-semibold text-blue-700 whitespace-nowrap">Email</th>
-                          <th className="px-4 py-2 text-left font-semibold text-blue-700 whitespace-nowrap">Department</th>
-                          <th className="px-4 py-2 text-left font-semibold text-blue-700 whitespace-nowrap">Role</th>
-                          <th className="px-4 py-2 text-left font-semibold text-blue-700 whitespace-nowrap">Date Joined</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentEmployees.length === 0 ? (
-                          <tr><td colSpan={5} className="text-center text-gray-400 py-4">No recent employees</td></tr>
-                        ) : recentEmployees.map(emp => (
-                          <tr key={emp.id} className="hover:bg-blue-50 transition">
-                            <td className="px-4 py-2 font-semibold text-gray-700 whitespace-nowrap">{emp.firstName} {emp.lastName}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{emp.email}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{emp.department}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{emp.role}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{emp.dateJoined ? new Date(emp.dateJoined).toLocaleDateString() : '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+              {/* Charts Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Sales Overview Bar Chart */}
+                <div className="bg-white rounded-2xl shadow p-6 flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+                      <span className="text-gray-500 text-sm">Last updated: 2 minutes ago</span>
+                    </div>
+                    <select className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700">
+                      <option>Last 6 months</option>
+                      <option>Last 12 months</option>
+                    </select>
                   </div>
-                  {/* Cards for mobile */}
-                  <div className="flex flex-col gap-3 lg:hidden">
-                    {recentEmployees.length === 0 ? (
-                      <div className="text-center text-gray-400 py-4">No recent employees</div>
-                    ) : recentEmployees.map(emp => (
-                      <div key={emp.id} className="border border-blue-100 rounded-lg p-3 sm:p-4 md:p-5 shadow-sm bg-blue-50">
-                        <div className="font-semibold text-blue-700 text-base sm:text-lg md:text-xl mb-1">{emp.firstName} {emp.lastName}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Email:</span> {emp.email}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Department:</span> {emp.department}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Role:</span> {emp.role}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Date Joined:</span> {emp.dateJoined ? new Date(emp.dateJoined).toLocaleDateString() : '-'}</div>
-                      </div>
-                    ))}
+                  <div className="flex-1 min-h-[220px]">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <BarChart data={[{month:'Jan',sales:1200},{month:'Feb',sales:2100},{month:'Mar',sales:3200},{month:'Apr',sales:4100},{month:'May',sales:4800},{month:'Jun',sales:5400}]}
+                        margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" tick={{fontSize:13}}/>
+                        <YAxis tick={{fontSize:13}}/>
+                        <Tooltip />
+                        <Bar dataKey="sales" fill="#a259f7" radius={[8,8,0,0]} barSize={32}/>
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
+                  <div className="mt-2 text-gray-700 font-semibold text-lg">Sales Overview</div>
                 </div>
-                {/* Recent Tasks Table */}
-                <div className="rounded-xl bg-white border border-gray-100 shadow-md p-4 sm:p-8">
-                  <h3 className="text-xl sm:text-2xl font-bold text-green-600 mb-3 sm:mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" /></svg>
-                    Recent Tasks
-                  </h3>
-                  {/* Table for lg+ */}
-                  <div className="hidden lg:block overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
-                      <thead>
-                        <tr className="bg-green-50">
-                          <th className="px-4 py-2 text-left font-semibold text-green-700 whitespace-nowrap">Task</th>
-                          <th className="px-4 py-2 text-left font-semibold text-green-700 whitespace-nowrap">Priority</th>
-                          <th className="px-4 py-2 text-left font-semibold text-green-700 whitespace-nowrap">Created At</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentTasks.length === 0 ? (
-                          <tr><td colSpan={3} className="text-center text-gray-400 py-4">No recent tasks</td></tr>
-                        ) : recentTasks.map(task => (
-                          <tr key={task.id} className="hover:bg-green-50 transition">
-                            <td className="px-4 py-2 font-semibold text-gray-700 whitespace-nowrap">{task.task}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{task.priority}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{task.createdAt ? new Date(task.createdAt.seconds ? task.createdAt.seconds * 1000 : task.createdAt).toLocaleDateString() : '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                {/* Orders Trend Line Chart */}
+                <div className="bg-white rounded-2xl shadow p-6 flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+                      <span className="text-gray-500 text-sm">Last updated: 2 minutes ago</span>
+                    </div>
+                    <select className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700">
+                      <option>Last 6 months</option>
+                      <option>Last 12 months</option>
+                    </select>
                   </div>
-                  {/* Cards for mobile */}
-                  <div className="flex flex-col gap-3 lg:hidden">
-                    {recentTasks.length === 0 ? (
-                      <div className="text-center text-gray-400 py-4">No recent tasks</div>
-                    ) : recentTasks.map(task => (
-                      <div key={task.id} className="border border-green-100 rounded-lg p-3 sm:p-4 md:p-5 shadow-sm bg-green-50">
-                        <div className="font-semibold text-green-700 text-base sm:text-lg md:text-xl mb-1">{task.task}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Priority:</span> {task.priority}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Created At:</span> {task.createdAt ? new Date(task.createdAt.seconds ? task.createdAt.seconds * 1000 : task.createdAt).toLocaleDateString() : '-'}</div>
-                      </div>
-                    ))}
+                  <div className="flex-1 min-h-[220px]">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <LineChart data={[{month:'Jan',orders:400},{month:'Feb',orders:900},{month:'Mar',orders:1800},{month:'Apr',orders:3200},{month:'May',orders:4200},{month:'Jun',orders:2500}]}
+                        margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" tick={{fontSize:13}}/>
+                        <YAxis tick={{fontSize:13}}/>
+                        <Tooltip />
+                        <Line type="monotone" dataKey="orders" stroke="#a259f7" strokeWidth={3} dot={{r:5,stroke:'#a259f7',strokeWidth:2,fill:'#fff'}} activeDot={{r:7}}/>
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
-                </div>
-                {/* Recent Announcements Table */}
-                <div className="rounded-xl bg-white border border-gray-100 shadow-md p-4 sm:p-8">
-                  <h3 className="text-xl sm:text-2xl font-bold text-purple-600 mb-3 sm:mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 13V7a2 2 0 00-2-2H7a2 2 0 00-2 2v6m14 0a2 2 0 01-2 2H7a2 2 0 01-2-2m14 0v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6" /></svg>
-                    Latest Announcements
-                  </h3>
-                  {/* Table for lg+ */}
-                  <div className="hidden lg:block overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
-                      <thead>
-                        <tr className="bg-purple-50">
-                          <th className="px-4 py-2 text-left font-semibold text-purple-700 whitespace-nowrap">Title</th>
-                          <th className="px-4 py-2 text-left font-semibold text-purple-700 whitespace-nowrap">Type</th>
-                          <th className="px-4 py-2 text-left font-semibold text-purple-700 whitespace-nowrap">Created At</th>
-                          <th className="px-4 py-2 text-left font-semibold text-purple-700 whitespace-nowrap">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentAnnouncements.length === 0 ? (
-                          <tr><td colSpan={4} className="text-center text-gray-400 py-4">No recent announcements</td></tr>
-                        ) : recentAnnouncements.map(ann => (
-                          <tr key={ann.id} className="hover:bg-purple-50 transition">
-                            <td className="px-4 py-2 font-semibold text-gray-700 whitespace-nowrap">{ann.title}</td>
-                            <td className="px-4 py-2 text-gray-600 capitalize whitespace-nowrap">{ann.type}</td>
-                            <td className="px-4 py-2 text-gray-600 whitespace-nowrap">{ann.createdAt ? (ann.createdAt.seconds ? new Date(ann.createdAt.seconds * 1000).toLocaleDateString() : new Date(ann.createdAt).toLocaleDateString()) : '-'}</td>
-                            <td className="px-4 py-2 whitespace-nowrap">
-                              <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${ann.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                                {ann.status === 'published' ? 'Published' : 'Not Published'}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  {/* Cards for mobile */}
-                  <div className="flex flex-col gap-3 lg:hidden">
-                    {recentAnnouncements.length === 0 ? (
-                      <div className="text-center text-gray-400 py-4">No recent announcements</div>
-                    ) : recentAnnouncements.map(ann => (
-                      <div key={ann.id} className="border border-purple-100 rounded-lg p-3 sm:p-4 md:p-5 shadow-sm bg-purple-50">
-                        <div className="font-semibold text-purple-700 text-base sm:text-lg md:text-xl mb-1">{ann.title}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Type:</span> {ann.type}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Created At:</span> {ann.createdAt ? (ann.createdAt.seconds ? new Date(ann.createdAt.seconds * 1000).toLocaleDateString() : new Date(ann.createdAt).toLocaleDateString()) : '-'}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-gray-600"><span className="font-semibold">Status:</span> <span className={`font-semibold ${ann.status === 'published' ? 'text-green-700' : 'text-gray-700'}`}>{ann.status === 'published' ? 'Published' : 'Not Published'}</span></div>
-                      </div>
-                    ))}
-                  </div>
+                  <div className="mt-2 text-gray-700 font-semibold text-lg">Orders Trend</div>
                 </div>
               </div>
 
-              {/* Learn How to Use Section */}
-              <div className="w-full rounded-xl bg-gradient-to-r from-[#a259f7] to-[#b78aeb] shadow-md p-8 mt-10 flex flex-col items-center text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Learn How to Use the Admin Panel</h2>
-                <p className="text-white/90 mb-5 max-w-2xl">
-                  Explore the features and capabilities of your admin panel in a safe, interactive environment. Try out different options, see how things work, and become a pro at managing your company!
-                </p>
-                <button
-                  className="px-6 py-2 rounded-full font-semibold text-[#a259f7] bg-white hover:bg-gray-100 shadow transition-colors text-lg"
-                  onClick={() => router.push(`/playground${token ? `?token=${encodeURIComponent(token)}` : ''}`)}
-                >
-                  Learn More
-                </button>
-              </div>
-
-              {/* Terms & Privacy Section */}
-              <div className="w-full rounded-xl bg-white border border-gray-100 shadow-md p-8 mt-8 flex flex-col items-center text-center">
-                <h2 className="text-2xl font-bold mb-2" style={{ color: '#a259f7' }}>Terms & Privacy</h2>
-                <p className="text-gray-700 mb-2 max-w-2xl">
-                  We value your trust and are committed to protecting your data. Please take a moment to review our Terms of Service and Privacy Policy to understand your rights and responsibilities as an admin panel user.
-                </p>
-                <p className="text-gray-700 mb-6 max-w-2xl">
-                  Staying informed helps you make the most of our platform while ensuring your information is handled with care. Your privacy and security are our top priorities.
-                </p>
-                <div className="flex gap-4 flex-wrap justify-center">
-                  <button
-                    className="px-6 py-2 rounded-full font-semibold text-white bg-gradient-to-r from-[#a259f7] to-[#b78aeb] hover:from-[#b78aeb] hover:to-[#a259f7] shadow transition-colors text-lg"
-                    onClick={() => router.push(`/terms${token ? `?token=${encodeURIComponent(token)}` : ''}`)}
-                  >
-                    Read Terms
-                  </button>
-                  <button
-                    className="px-6 py-2 rounded-full font-semibold text-[#a259f7] bg-white border border-[#a259f7] hover:bg-[#f5edff] shadow transition-colors text-lg"
-                    onClick={() => router.push(`/privacy${token ? `?token=${encodeURIComponent(token)}` : ''}`)}
-                  >
-                    Read Privacy Policy
-                  </button>
+              {/* Recent Orders Section */}
+              <div className="mt-16 mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Orders</h2>
+                <div className="bg-white rounded-2xl shadow p-4 overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {[
+                        { id: 'ORD-1001', customer: 'Amit Sharma', date: '2024-06-10', amount: '$1,200', status: 'Completed' },
+                        { id: 'ORD-1002', customer: 'Priya Singh', date: '2024-06-09', amount: '$850', status: 'Pending' },
+                        { id: 'ORD-1003', customer: 'Rahul Verma', date: '2024-06-08', amount: '$2,100', status: 'Cancelled' },
+                      ].map((order) => (
+                        <tr key={order.id} className="hover:bg-gray-50 transition">
+                          <td className="px-4 py-4 font-medium text-gray-900">{order.id}</td>
+                          <td className="px-4 py-4 text-gray-700">{order.customer}</td>
+                          <td className="px-4 py-4 text-gray-500">{order.date}</td>
+                          <td className="px-4 py-4 text-gray-900">{order.amount}</td>
+                          <td className="px-4 py-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.status === 'Completed' ? 'bg-green-100 text-green-700' : order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{order.status}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-
-              {/* Support Component */}
-              <Support />
             </div>
           </main>
         </div>

@@ -32,10 +32,8 @@ function ProductDashboardContent() {
   const { user, loading, error } = useUserInfo();
 
   useEffect(() => {
-    if (router.isReady && (!ci || !aid)) {
-      router.replace("/auth/login");
-    }
-  }, [router.isReady, ci, aid]);
+    // Removed login redirect for missing ci/aid
+  }, []);
 
   if (!ci || !aid) return null;
   if (loading) {

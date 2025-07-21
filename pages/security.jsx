@@ -138,10 +138,8 @@ function SecurityContent() {
 
   // Only return after all hooks
   useEffect(() => {
-    if (router.isReady && (!ci || !aid)) {
-      router.replace("/auth/login");
-    }
-  }, [router.isReady, ci, aid]);
+    // Removed login redirect for missing ci/aid
+  }, []);
 
   useEffect(() => {
     if (error || passwordsError) {

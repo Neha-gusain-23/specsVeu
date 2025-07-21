@@ -50,13 +50,15 @@ const Login = () => {
     }
     // Use the authenticate function from the hook
     const result = await authenticate(companyId, uniqueId);
+    console.log('Login attempt:', { companyId, uniqueId, result });
     if (result) {
       setNotificationMessage("Successfully logged in!");
       setShowNotification(true);
       setTimeout(() => {
         setShowNotification(false);
         const token = encryptToken(companyId, uniqueId);
-        router.push(`/playground?token=${encodeURIComponent(token)}`);
+        console.log('Redirecting to dashboard with token:', token);
+        router.push(`/dashboard?token=${encodeURIComponent(token)}`);
       }, 1500);
     } else {
       setNotificationMessage(error || "Invalid credentials");
@@ -90,56 +92,10 @@ const Login = () => {
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 17a5 5 0 100-10 5 5 0 000 10z" />
               </svg>
-            ) : (
-              // Checkmark SVG for success
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-            <span className="font-medium text-sm md:text-base">{notificationMessage}</span>
+            ) : null}
+            <span>{notificationMessage}</span>
           </div>
         )}
-        {/* Back Button - Top Left */}
-        <button
-          onClick={() => router.push("/")}
-          className="absolute top-2 left-2 md:top-3 md:left-6 z-50 flex items-center space-x-2 text-[#a259f7] hover:text-gray-500 transition-colors duration-200 text-base md:text-lg"
-        >
-          <span className="text-lg">←</span>
-          <span className="font-medium">Back</span>
-        </button>
-        {/* Left Section */}
-        <div className="flex-1 flex flex-col justify-start items-start py-8 px-4 sm:px-8 md:py-[5vh] md:px-[4vw] relative bg-white/5 backdrop-blur-xs w-full md:w-auto">
-          {/* Branding Info */}
-          <div className="max-w-full md:max-w-[500px]">
-            <h1 className="text-[32px] sm:text-[40px] md:text-[50px] mt-4 md:mt-8 font-extrabold text-[#a259f7] mb-3 md:mb-4">
-              Welcome to Admin panel
-            </h1>
-            <p className="text-[15px] sm:text-[16px] md:text-[18px] leading-relaxed text-[#fff]">
-              Manage your company, employees, and products with ease. Cyber
-              Clipper gives you a powerful admin panel that is fast, secure, and
-              reliable.
-            </p>
-            <ul className="mt-4 md:mt-5 pl-5 text-[#a259f7] font-semibold list-disc text-[14px] sm:text-[15px] md:text-[16px]">
-              <li>Easy user management</li>
-              <li>Real-time analytics</li>
-              <li>Advanced security</li>
-            </ul>
-            {/* Brief additional info */}
-            <p className="mt-4 md:mt-5 text-[13px] sm:text-[14px] md:text-[15px] text-[#fff]">
-              Get started in minutes and empower your team with tools designed
-              for productivity and growth.
-            </p>
-          </div>
-          <div className="mt-8 md:mt-10 w-full flex justify-center md:justify-start">
-            <button
-              onClick={() => setShowPricingModal(true)}
-              className="inline-block py-2 px-4 bg-[#a259f7] text-white rounded-md font-semibold text-sm no-underline tracking-wide hover:bg-[#8b4fd8] transition-colors duration-200"
-            >
-              View Pricing
-            </button>
-          </div>
-        </div>
-        {/* Right Section (Sign In Form) */}
         <div className="flex-1 flex justify-center items-center py-8 px-4 sm:px-8 md:py-[5vh] md:px-[4vw] w-full md:w-auto">
           <form
             onSubmit={handleVerify}
@@ -353,4 +309,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; 

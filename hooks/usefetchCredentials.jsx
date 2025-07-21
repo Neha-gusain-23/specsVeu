@@ -20,6 +20,7 @@ export default function usefetchCredentials() {
     setError(null);
     setUser(null);
     try {
+      console.log("Login values:", companyId, uniqueId); // DEBUG
       const usersRef = collection(db, 'users');
       const q = query(
         usersRef,
@@ -27,6 +28,7 @@ export default function usefetchCredentials() {
         where('uniqueId', '==', uniqueId)
       );
       const querySnapshot = await getDocs(q);
+      console.log("Query result:", querySnapshot.docs.map(d => d.data())); // DEBUG
       if (!querySnapshot.empty) {
         setUser({ id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() });
         return { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
